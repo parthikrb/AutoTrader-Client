@@ -1,38 +1,74 @@
-.App {
+.header {
+  width: 100%;
+  height: 58px;
+  background-color: #0be881;
+  line-height: 58px;
+  font-size: 40px;
+  font-weight: bolder;
+  padding: 0px 20px;
+  display: block;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.container {
+  width: 80%;
+  padding: 20px;
+  height: calc(100vh - 58px);
+  background-color: #d2dae2;
+  margin: auto;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.connectBtn {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #ffdd59;
+  border: none;
+  outline: none;
+  display: block;
+  margin: auto;
+  font-size: large;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.connectBtn:hover {
+  background-color: #ffd32a;
 }
 
-.App-link {
-  color: #61dafb;
+.textInput {
+  width: 500px;
+  height: 60px;
+  padding: 20px;
+  display: block;
+  margin: auto;
+  margin-top: 20px;
+  outline: none;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.transaction {
+  margin: auto;
+  display: block;
+  width: 200px;
+  padding: 20px;
+}
+
+label {
+  margin: 0 10px;
+}
+
+.startBtn {
+  width: 500px;
+  height: 60px;
+  padding: 20px;
+  font-size: larger;
+  font-weight: bolder;
+  text-align: center;
+  background-color: #05c46b;
+  display: block;
+  margin: auto;
+  border: none;
+  outline: none;
+}
+
+.startBtn:hover {
+  background-color: #0be881;
 }
