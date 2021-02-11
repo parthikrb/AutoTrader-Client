@@ -41,6 +41,7 @@ function App() {
     await axios
       .post("https://nameless-cove-63960.herokuapp.com/api/price", {
         basePrice,
+        inTheMoney,
         lotSize,
         transactionType,
         requestToken,
