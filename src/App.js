@@ -4,12 +4,17 @@ import axios from "axios";
 
 function App() {
   const [basePrice, setBasePrice] = useState(null);
+  const [inTheMoney, setInTheMoney] = useState(null);
   const [lotSize, setLotSize] = useState(null);
   const [requestToken, setRequestToken] = useState("");
   const [transactionType, setTransactionType] = useState("BUY");
 
   const handleBasePriceChange = (event) => {
     setBasePrice(event.target.value);
+  };
+
+  const handleInTheMoneyChange = (event) => {
+    setInTheMoney(event.target.value);
   };
 
   const handleLotSizeChange = (event) => {
@@ -51,14 +56,26 @@ function App() {
         <button className="connectBtn" onClick={handleConnect}>
           Connect
         </button>
-        <input
-          type="number"
-          className="textInput"
-          aria-label="base-price"
-          placeholder="Base Price"
-          value={basePrice}
-          onChange={handleBasePriceChange}
-        />
+        <div className="price">
+          <input
+            type="number"
+            className="priceInput"
+            aria-label="base-price"
+            placeholder="Base Price"
+            value={basePrice}
+            onChange={handleBasePriceChange}
+            autoFocus
+          />
+          <div className="spacer"></div>
+          <input
+            type="number"
+            className="priceInput"
+            aria-label="in-the-money"
+            placeholder="In The Money"
+            value={inTheMoney}
+            onChange={handleInTheMoneyChange}
+          />
+        </div>
         <input
           type="number"
           className="textInput"

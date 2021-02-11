@@ -44,6 +44,26 @@
   outline: none;
 }
 
+.price {
+  display: flex;
+  width: 500px;
+  margin: auto;
+}
+
+.priceInput {
+  width: 48%;
+  height: 60px;
+  padding: 20px;
+  display: block;
+  margin: auto;
+  margin-top: 20px;
+  outline: none;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
 .transaction {
   margin: auto;
   display: block;
