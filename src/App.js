@@ -58,6 +58,7 @@ function App() {
       .post("https://nameless-cove-63960.herokuapp.com/api/price", {
         basePrice,
         lotSize,
+        decision,
         requestToken,
         transactions,
       })
