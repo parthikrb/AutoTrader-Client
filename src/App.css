@@ -19,8 +19,8 @@
 }
 
 .connectBtn {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background-color: #ffdd59;
   border: none;
@@ -35,7 +35,7 @@
 }
 
 .textInput {
-  width: 500px;
+  width: 600px;
   height: 60px;
   padding: 20px;
   display: block;
@@ -46,12 +46,13 @@
 
 .price {
   display: flex;
-  width: 500px;
+  width: 600px;
   margin: auto;
+  margin-top: 20px;
 }
 
 .priceInput {
-  width: 48%;
+  width: 28%;
   height: 60px;
   padding: 20px;
   display: block;
@@ -64,11 +65,11 @@
   flex-grow: 1;
 }
 
-.transaction {
+.transactions,
+.token {
   margin: auto;
   display: block;
-  width: 200px;
-  padding: 20px;
+  width: 600px;
 }
 
 label {
@@ -87,6 +88,7 @@ label {
   margin: auto;
   border: none;
   outline: none;
+  margin-top: 20px;
 }
 
 .startBtn:hover {
