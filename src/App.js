@@ -12,12 +12,14 @@ import {
   TextField,
 } from "@material-ui/core";
 import OrderSelection from "./components/OrderSelection/OrderSelection";
+import { isToday } from "date-fns";
 
 function App() {
   const [basePrice, setBasePrice] = useState("");
   const [lotSize, setLotSize] = useState(1);
   const [decision, setDecision] = useState("LONG");
   const [requestToken, setRequestToken] = useState("");
+  const [lastTrade, setLastTrade] = useState({});
   const initialTransactions = [
     { transactionType: "BUY", optionType: "CALL", inTheMoney: 15000 },
     { transactionType: "SELL", optionType: "PUT", inTheMoney: 15000 },
@@ -58,10 +60,28 @@ function App() {
     tab.focus();
   };
 
+  const getLatestTrade = async () => {
+    await axios
+      .get(`${apiEndpoint.current}/api/lastPrice`)
+      .then(({ data }) => {
+        console.log(data[0].date);
+        if (isToday(new Date(data[0].date))) {
+          setLastTrade({ ...data[0] });
+        }
+        console.log({ ...data[0] });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     console.log("Current Environment Status: ", process.env.NODE_ENV);
     apiEndpoint.current =
-      process.env.NODE_ENV === "development" ? `http://localhost:5000` : `https://nameless-cove-63960.herokuapp.com`;
+      process.env.NODE_ENV === "development"
+        ? `http://localhost:5000`
+        : `https://nameless-cove-63960.herokuapp.com`;
+    getLatestTrade();
   }, []);
 
   useEffect(() => {
@@ -77,8 +97,11 @@ function App() {
         requestToken,
         transactions,
       })
-      .then((response) => alert("Started Successfully"))
-      .catch((error) => alert(error));
+      .then((response) => {
+        getLatestTrade();
+        alert(response.data);
+      })
+      .catch((error) => alert("Error: Check the Access Token"));
   };
 
   const handleNewTransaction = (index) => {
@@ -111,6 +134,7 @@ function App() {
             type="number"
             className="priceInput"
             aria-label="base-price"
+            step={50}
             value={basePrice}
             onChange={handleBasePriceChange}
             autoFocus
@@ -183,6 +207,41 @@ function App() {
         >
           Start Trading
         </button>
+      </div>
+      <div className="activeSection">
+        <h3>Active Strike and Trades</h3>
+        {Object.keys(lastTrade).length ? (
+          <div className="activeTrade">
+            <h3>{lastTrade.basePrice}</h3>
+            <p>Cut-off Price</p>
+            <h3>{lastTrade.decision}</h3>
+            <p>Decision</p>
+            <h3>{lastTrade.lotSize}</h3>
+            <p>Lot size</p>
+            <table>
+              <thead>
+                <tr>
+                  <th>Transaction Type</th>
+                  <th>Option Type</th>
+                  <th>In the Money</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lastTrade.transactions.map((transaction, index) => {
+                  return (
+                    <tr key={index}>
+                      <td>{transaction.transactionType}</td>
+                      <td>{transaction.optionType}</td>
+                      <td>{transaction.inTheMoney}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p>No Trades placed yet</p>
+        )}
       </div>
     </div>
   );

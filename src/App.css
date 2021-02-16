@@ -11,11 +11,50 @@
 }
 
 .container {
-  width: 80%;
+  width: 75%;
   padding: 20px;
   height: calc(100% - 58px);
   background-color: #d2dae2;
-  margin: auto;
+  float: left;
+}
+
+.activeSection {
+  width: 25%;
+  float: right;
+  background-color: slategray;
+  height: calc(100vh - 58px);
+  padding: 5px;
+}
+
+.activeSection > h3 {
+  text-align: center;
+  padding: 20px;
+  border-bottom: 1px solid #ffd32a;
+}
+
+.activeTrade {
+  text-align: center;
+}
+
+.activeTrade > h3 {
+  font-size: x-large;
+  color: seashell;
+}
+
+.activeTrade > p {
+  font-size: small;
+}
+
+table,
+th,
+td {
+  border-collapse: collapse;
+  border: 1px solid seashell;
+  padding: 3px;
+}
+
+table {
+  margin-top: 10px;
 }
 
 .connectBtn {
