@@ -25,7 +25,7 @@ function App() {
   ];
   const [transactions, setTransactions] = useState(initialTransactions);
 
-  const apiEndpoint = useRef("https://nameless-cove-63960.herokuapp.com");
+  const apiEndpoint = useRef(null);
   const tradeRef = useRef();
 
   const handleBasePriceChange = (event) => {
@@ -61,7 +61,7 @@ function App() {
   useEffect(() => {
     console.log("Current Environment Status: ", process.env.NODE_ENV);
     apiEndpoint.current =
-      process.env.NODE_ENV === "development" && `http://localhost:5000`;
+      process.env.NODE_ENV === "development" ? `http://localhost:5000` : `https://nameless-cove-63960.herokuapp.com`;
   }, []);
 
   useEffect(() => {
