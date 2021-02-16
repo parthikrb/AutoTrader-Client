@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import "./App.css";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import {
   Grid,
@@ -18,10 +18,15 @@ function App() {
   const [lotSize, setLotSize] = useState(1);
   const [decision, setDecision] = useState("LONG");
   const [requestToken, setRequestToken] = useState("");
-  const [transactions, setTransactions] = useState([]);
-  const [transaction1, setTransaction1] = useState({});
-  const [transaction2, setTransaction2] = useState({});
-  const [transaction3, setTransaction3] = useState({});
+  const initialTransactions = [
+    { transactionType: "BUY", optionType: "CALL", inTheMoney: 15000 },
+    { transactionType: "SELL", optionType: "PUT", inTheMoney: 15000 },
+    { transactionType: "BUY", optionType: "PUT", inTheMoney: 15000 },
+  ];
+  const [transactions, setTransactions] = useState(initialTransactions);
+
+  const apiEndpoint = useRef("https://nameless-cove-63960.herokuapp.com");
+  const tradeRef = useRef();
 
   const handleBasePriceChange = (event) => {
     setBasePrice(event.target.value);
@@ -38,24 +43,34 @@ function App() {
   const handleDecisionChange = (event) => {
     setDecision(event.target.value);
   };
+
+  const handleTransactionChange = (index, event) => {
+    const _transactions = [...transactions];
+    _transactions[index][event.target.name] = event.target.value;
+    setTransactions(_transactions);
+  };
+
   const handleConnect = () => {
     const tab = window.open(
-      "https://kite.trade/connect/login?api_key=eqtx7e356zu0fky2&v=3",
+      `https://kite.trade/connect/login?api_key=eqtx7e356zu0fky2&v=3`,
       "_blank"
     );
     tab.focus();
   };
 
-  const handleStartTrading = async () => {
-    setTransactions([]);
-    const _transactions = transactions;
-    if (Object.keys(transaction1).length) _transactions.push(transaction1);
-    if (Object.keys(transaction2).length) _transactions.push(transaction2);
-    if (Object.keys(transaction3).length) _transactions.push(transaction3);
-    setTransactions(_transactions);
+  useEffect(() => {
+    console.log("Current Environment Status: ", process.env.NODE_ENV);
+    apiEndpoint.current =
+      process.env.NODE_ENV === "development" && `http://localhost:5000`;
+  }, []);
 
+  useEffect(() => {
+    tradeRef.current.scrollIntoView();
+  }, [transactions]);
+
+  const handleStartTrading = async () => {
     await axios
-      .post("https://nameless-cove-63960.herokuapp.com/api/price", {
+      .post(`${apiEndpoint.current}/api/price`, {
         basePrice,
         lotSize,
         decision,
@@ -64,6 +79,23 @@ function App() {
       })
       .then((response) => alert("Started Successfully"))
       .catch((error) => alert(error));
+  };
+
+  const handleNewTransaction = (index) => {
+    setTransactions([
+      ...transactions,
+      {
+        transactionType: "BUY",
+        optionType: "CALL",
+        inTheMoney: 15000,
+      },
+    ]);
+  };
+
+  const handleRemoveTransaction = (index) => {
+    const newTransaction = [...transactions];
+    newTransaction.splice(index, 1);
+    setTransactions(newTransaction);
   };
 
   return (
@@ -126,12 +158,29 @@ function App() {
           />
         </div>
         <div className="transactions">
-          <OrderSelection addTransaction={setTransaction1} />
-          <OrderSelection addTransaction={setTransaction2} />
-          <OrderSelection addTransaction={setTransaction3} />
+          {transactions.map((transaction, index) => {
+            const { transactionType, optionType, inTheMoney } = transaction;
+            return (
+              <OrderSelection
+                key={index}
+                transactionType={transactionType}
+                optionType={optionType}
+                inTheMoney={inTheMoney}
+                addTransaction={(event) =>
+                  handleTransactionChange(index, event)
+                }
+                newTransaction={() => handleNewTransaction(index)}
+                removeTransaction={() => handleRemoveTransaction(index)}
+              />
+            );
+          })}
         </div>
 
-        <button className="startBtn" onClick={handleStartTrading}>
+        <button
+          className="startBtn"
+          onClick={handleStartTrading}
+          ref={tradeRef}
+        >
           Start Trading
         </button>
       </div>

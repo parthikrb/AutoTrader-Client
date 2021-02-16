@@ -13,7 +13,7 @@
 .container {
   width: 80%;
   padding: 20px;
-  height: calc(100vh - 58px);
+  height: calc(100% - 58px);
   background-color: #d2dae2;
   margin: auto;
 }
@@ -35,7 +35,7 @@
 }
 
 .textInput {
-  width: 600px;
+  width: 800px;
   height: 60px;
   padding: 20px;
   display: block;
@@ -46,7 +46,7 @@
 
 .price {
   display: flex;
-  width: 600px;
+  width: 800px;
   margin: auto;
   margin-top: 20px;
 }
@@ -69,7 +69,7 @@
 .token {
   margin: auto;
   display: block;
-  width: 600px;
+  width: 800px;
 }
 
 label {
