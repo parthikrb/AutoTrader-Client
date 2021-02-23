@@ -73,7 +73,8 @@ table {
   background-color: #ffd32a;
 }
 
-.textInput {
+.textInput,
+.tokenInput {
   width: 800px;
   height: 60px;
   padding: 20px;
@@ -81,6 +82,10 @@ table {
   margin: auto;
   margin-top: 20px;
   outline: none;
+}
+
+.tokenInput {
+  width: 550px;
 }
 
 .price {
@@ -109,6 +114,10 @@ table {
   margin: auto;
   display: block;
   width: 800px;
+}
+
+.token {
+  display: flex;
 }
 
 label {

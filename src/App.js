@@ -26,6 +26,7 @@ function App() {
     { transactionType: "BUY", optionType: "PUT", inTheMoney: 15000 },
   ];
   const [transactions, setTransactions] = useState(initialTransactions);
+  const [expiry, setExpiry] = useState('MONTHLY');
 
   const apiEndpoint = useRef(null);
   const tradeRef = useRef();
@@ -45,6 +46,10 @@ function App() {
   const handleDecisionChange = (event) => {
     setDecision(event.target.value);
   };
+
+  const handleExpiryChange = (event) => {
+    setExpiry(event.target.value);
+  }
 
   const handleTransactionChange = (index, event) => {
     const _transactions = [...transactions];
@@ -94,6 +99,7 @@ function App() {
         basePrice,
         lotSize,
         decision,
+        expiry,
         requestToken,
         transactions,
       })
@@ -175,11 +181,33 @@ function App() {
           <TextField
             label="Request token"
             type="text"
-            className="textInput"
+            className="tokenInput"
             aria-label="request-token"
             value={requestToken}
             onChange={handleRequestTokenChange}
           />
+          <div className="spacer"></div>
+          <FormControl component="fieldset">
+            <FormLabel component="legend">Option Expiry</FormLabel>
+            <RadioGroup
+              aria-label="expiry"
+              style={{ display: "block" }}
+              name="expiry"
+              value={expiry}
+              onChange={handleExpiryChange}
+            >
+              <FormControlLabel
+                value="MONTHLY"
+                control={<Radio color="primary" />}
+                label="Monthly"
+              />
+              <FormControlLabel
+                value="WEEKLY"
+                control={<Radio color="secondary" />}
+                label="Weekly"
+              />
+            </RadioGroup>
+          </FormControl>
         </div>
         <div className="transactions">
           {transactions.map((transaction, index) => {
@@ -240,8 +268,8 @@ function App() {
             </table>
           </div>
         ) : (
-          <p>No Trades placed yet</p>
-        )}
+            <p>No Trades placed yet</p>
+          )}
       </div>
     </div>
   );
