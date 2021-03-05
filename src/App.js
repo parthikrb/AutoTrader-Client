@@ -13,6 +13,11 @@ import {
 } from "@material-ui/core";
 import OrderSelection from "./components/OrderSelection/OrderSelection";
 import { isToday } from "date-fns";
+import DateFnsUtils from '@date-io/date-fns';
+import {
+  MuiPickersUtilsProvider,
+  KeyboardDatePicker,
+} from '@material-ui/pickers';
 
 function App() {
   const [basePrice, setBasePrice] = useState("");
@@ -26,7 +31,7 @@ function App() {
     { transactionType: "BUY", optionType: "PUT", inTheMoney: 15000 },
   ];
   const [transactions, setTransactions] = useState(initialTransactions);
-  const [expiry, setExpiry] = useState('MONTHLY');
+  const [expiry, setExpiry] = useState(new Date());
 
   const apiEndpoint = useRef(null);
   const tradeRef = useRef();
@@ -47,8 +52,8 @@ function App() {
     setDecision(event.target.value);
   };
 
-  const handleExpiryChange = (event) => {
-    setExpiry(event.target.value);
+  const handleExpiryChange = (date) => {
+    setExpiry(date);
   }
 
   const handleTransactionChange = (index, event) => {
@@ -80,6 +85,10 @@ function App() {
       });
   };
 
+  const disableWeekends = (date) => {
+    return date.getDay() === 0 || date.getDay() === 6;
+  }
+
   useEffect(() => {
     console.log("Current Environment Status: ", process.env.NODE_ENV);
     apiEndpoint.current =
@@ -107,7 +116,7 @@ function App() {
         getLatestTrade();
         alert(response.data);
       })
-      .catch((error) => alert("Error: Check the Access Token"));
+      .catch((error) => alert("Error: Check the Access Token", error));
   };
 
   const handleNewTransaction = (index) => {
@@ -187,27 +196,22 @@ function App() {
             onChange={handleRequestTokenChange}
           />
           <div className="spacer"></div>
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Option Expiry</FormLabel>
-            <RadioGroup
-              aria-label="expiry"
-              style={{ display: "block" }}
-              name="expiry"
+          <MuiPickersUtilsProvider utils={DateFnsUtils} style={{ marginTop: `0px !important` }}>
+            <KeyboardDatePicker
+              disableToolbar
+              variant="inline"
+              format="dd/MM/yyyy"
+              id="expiry"
+              label="Expiry"
               value={expiry}
+              autoOk
               onChange={handleExpiryChange}
-            >
-              <FormControlLabel
-                value="MONTHLY"
-                control={<Radio color="primary" />}
-                label="Monthly"
-              />
-              <FormControlLabel
-                value="WEEKLY"
-                control={<Radio color="secondary" />}
-                label="Weekly"
-              />
-            </RadioGroup>
-          </FormControl>
+              KeyboardButtonProps={{
+                'aria-label': 'change date',
+              }}
+              shouldDisableDate={disableWeekends}
+            />
+          </MuiPickersUtilsProvider>
         </div>
         <div className="transactions">
           {transactions.map((transaction, index) => {
