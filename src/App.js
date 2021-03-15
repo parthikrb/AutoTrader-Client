@@ -64,7 +64,7 @@ function App() {
 
   const handleConnect = () => {
     const tab = window.open(
-      `https://kite.trade/connect/login?api_key=eqtx7e356zu0fky2&v=3`,
+      `https://kite.trade/connect/login?api_key=vbhyk1nrel9grw1l&v=3`,
       "_blank"
     );
     tab.focus();
