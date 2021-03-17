@@ -36,6 +36,13 @@ function App() {
   const apiEndpoint = useRef(null);
   const tradeRef = useRef();
 
+  const request_token = new URLSearchParams(window.location.search).get('request_token');
+  console.log('request_token: ', request_token);
+
+  useEffect(() => {
+    if (!request_token) return;
+    setRequestToken(request_token);
+  }, [request_token])
   const handleBasePriceChange = (event) => {
     setBasePrice(event.target.value);
   };
@@ -64,8 +71,8 @@ function App() {
 
   const handleConnect = () => {
     const tab = window.open(
-      `https://kite.trade/connect/login?api_key=vbhyk1nrel9grw1l&v=3`,
-      "_blank"
+      `https://kite.trade/connect/login?api_key=${process.env.REACT_APP_API_KEY}&v=3`,
+      "_self"
     );
     tab.focus();
   };
@@ -99,8 +106,9 @@ function App() {
   }, []);
 
   useEffect(() => {
+    if (!requestToken) return;
     tradeRef.current.scrollIntoView();
-  }, [transactions]);
+  }, [transactions, requestToken]);
 
   const handleStartTrading = async () => {
     await axios
@@ -113,6 +121,7 @@ function App() {
         transactions,
       })
       .then((response) => {
+        setRequestToken(null);
         getLatestTrade();
         alert(response.data);
       })
@@ -140,105 +149,103 @@ function App() {
     <div className="app">
       <div className="header">AutoTrader</div>
       <div className="container">
-        <button className="connectBtn" onClick={handleConnect}>
-          Connect
+        {!requestToken &&
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 80px)' }}>
+            <button className="connectBtn" onClick={handleConnect}>
+              Connect
         </button>
-        <div className="price">
-          <TextField
-            label="Cut off Price"
-            type="number"
-            className="priceInput"
-            aria-label="base-price"
-            step={50}
-            value={basePrice}
-            onChange={handleBasePriceChange}
-            autoFocus
-          />
-          <div className="spacer"></div>
-          <TextField
-            label="Lot Size"
-            type="number"
-            className="priceInput"
-            aria-label="lot-size"
-            value={lotSize}
-            onChange={handleLotSizeChange}
-          />
-          <div className="spacer"></div>
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Take Long / Short?</FormLabel>
-            <RadioGroup
-              aria-label="decision-type"
-              style={{ display: "block" }}
-              name="decisionType"
-              value={decision}
-              onChange={handleDecisionChange}
-            >
-              <FormControlLabel
-                value="LONG"
-                control={<Radio color="primary" />}
-                label="Long"
-              />
-              <FormControlLabel
-                value="SHORT"
-                control={<Radio color="secondary" />}
-                label="Short"
-              />
-            </RadioGroup>
-          </FormControl>
-        </div>
-        <div className="token">
-          <TextField
-            label="Request token"
-            type="text"
-            className="tokenInput"
-            aria-label="request-token"
-            value={requestToken}
-            onChange={handleRequestTokenChange}
-          />
-          <div className="spacer"></div>
-          <MuiPickersUtilsProvider utils={DateFnsUtils} style={{ marginTop: `0px !important` }}>
-            <KeyboardDatePicker
-              disableToolbar
-              variant="inline"
-              format="dd/MM/yyyy"
-              id="expiry"
-              label="Expiry"
-              value={expiry}
-              autoOk
-              onChange={handleExpiryChange}
-              KeyboardButtonProps={{
-                'aria-label': 'change date',
-              }}
-              shouldDisableDate={disableWeekends}
+          </div>
+        }
+        {requestToken && (<>
+          <div className="price">
+            <TextField
+              label="Cut off Price"
+              type="number"
+              style={{ width: '120px' }}
+              className="priceInput"
+              aria-label="base-price"
+              step={50}
+              value={basePrice}
+              onChange={handleBasePriceChange}
+              autoFocus
             />
-          </MuiPickersUtilsProvider>
-        </div>
-        <div className="transactions">
-          {transactions.map((transaction, index) => {
-            const { transactionType, optionType, inTheMoney } = transaction;
-            return (
-              <OrderSelection
-                key={index}
-                transactionType={transactionType}
-                optionType={optionType}
-                inTheMoney={inTheMoney}
-                addTransaction={(event) =>
-                  handleTransactionChange(index, event)
-                }
-                newTransaction={() => handleNewTransaction(index)}
-                removeTransaction={() => handleRemoveTransaction(index)}
+            <div className="spacer"></div>
+            <TextField
+              label="Lot Size"
+              type="number"
+              className="priceInput"
+              style={{ width: '120px' }}
+              aria-label="lot-size"
+              value={lotSize}
+              onChange={handleLotSizeChange}
+            />
+            <div className="spacer"></div>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Take Long / Short?</FormLabel>
+              <RadioGroup
+                aria-label="decision-type"
+                style={{ display: "block" }}
+                name="decisionType"
+                value={decision}
+                onChange={handleDecisionChange}
+              >
+                <FormControlLabel
+                  value="LONG"
+                  control={<Radio color="primary" />}
+                  label="Long"
+                />
+                <FormControlLabel
+                  value="SHORT"
+                  control={<Radio color="secondary" />}
+                  label="Short"
+                />
+              </RadioGroup>
+            </FormControl>
+            <div className="spacer"></div>
+            <MuiPickersUtilsProvider utils={DateFnsUtils} style={{ marginTop: `0px !important` }}>
+              <KeyboardDatePicker
+                disableToolbar
+                variant="inline"
+                format="dd/MM/yyyy"
+                id="expiry"
+                label="Expiry"
+                value={expiry}
+                autoOk
+                onChange={handleExpiryChange}
+                KeyboardButtonProps={{
+                  'aria-label': 'change date',
+                }}
+                shouldDisableDate={disableWeekends}
               />
-            );
-          })}
-        </div>
+            </MuiPickersUtilsProvider>
+          </div>
+          <div className="transactions">
+            {transactions.map((transaction, index) => {
+              const { transactionType, optionType, inTheMoney } = transaction;
+              return (
+                <OrderSelection
+                  key={index}
+                  transactionType={transactionType}
+                  optionType={optionType}
+                  inTheMoney={inTheMoney}
+                  addTransaction={(event) =>
+                    handleTransactionChange(index, event)
+                  }
+                  newTransaction={() => handleNewTransaction(index)}
+                  removeTransaction={() => handleRemoveTransaction(index)}
+                />
+              );
+            })}
+          </div>
 
-        <button
-          className="startBtn"
-          onClick={handleStartTrading}
-          ref={tradeRef}
-        >
-          Start Trading
+          <button
+            className="startBtn"
+            onClick={handleStartTrading}
+            ref={tradeRef}
+          >
+            Start Trading
         </button>
+        </>)}
       </div>
       <div className="activeSection">
         <h3>Active Strike and Trades</h3>
@@ -255,7 +262,7 @@ function App() {
                 <tr>
                   <th>Transaction Type</th>
                   <th>Option Type</th>
-                  <th>In the Money</th>
+                  <th>Strike Price</th>
                 </tr>
               </thead>
               <tbody>
@@ -272,8 +279,8 @@ function App() {
             </table>
           </div>
         ) : (
-            <p>No Trades placed yet</p>
-          )}
+          <p>No Trades placed yet</p>
+        )}
       </div>
     </div>
   );
